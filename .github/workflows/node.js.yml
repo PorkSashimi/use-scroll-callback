@@ -16,4 +16,5 @@ jobs:
       matrix:
         node-version: [16.x]
     steps:
+    - run: npm install pnpm
     - run: pnpm run build
