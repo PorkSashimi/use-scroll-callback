@@ -4,12 +4,14 @@
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "dev": "cd example  &&  pnpm i  && pnpm run dev &&  cd ../",
-    "publish:patch": "pnpm run build && pnpm run publish --patch",
-    "publish:major": "pnpm run build && pnpm run publish --major",
+    "dev": "cd example && pnpm i && pnpm run dev && cd ../",
+    "publish:patch": "pnpm run build && npm publish --access public",
     "clean": "rm -rf dist/ && rm -rf node_modules/",
-    "build": "pnpm clean  && pnpm i  && rollup --config rollup.config.js && tsc"
+    "build": "pnpm clean && pnpm i && rollup --config rollup.config.js && tsc"
   },
   "keywords": [
     "hooks",
