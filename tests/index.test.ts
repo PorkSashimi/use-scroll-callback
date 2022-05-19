@@ -36,14 +36,14 @@ describe('useScroll', () => {
 
   test('scroll element should be defined', () => {
     expect(document.getElementById(SCROLL_ELEMENT_DOM_ID)).toBeDefined();
-    expect(document.getElementById(SCROLL_ELEMENT_DOM_ID).getAttribute('id')).equal(SCROLL_ELEMENT_DOM_ID);
-    expect(document.getElementById(SCROLL_ELEMENT_DOM_ID).getAttribute('style')).equal(`width: ${SCROLL_CONTAINER_WIDTH * 2}px;height: ${SCROLL_CONTAINER_HEIGHT * 2}px`);
+    expect(document.getElementById(SCROLL_ELEMENT_DOM_ID)?.getAttribute('id')).equal(SCROLL_ELEMENT_DOM_ID);
+    expect(document.getElementById(SCROLL_ELEMENT_DOM_ID)?.getAttribute('style')).equal(`width: ${SCROLL_CONTAINER_WIDTH * 2}px;height: ${SCROLL_CONTAINER_HEIGHT * 2}px`);
   });
 
   test('scroll container should be defined', () => {
     expect(document.getElementById(SCROLL_CONTAINER_DOM_ID)).toBeDefined();
-    expect(document.getElementById(SCROLL_CONTAINER_DOM_ID).getAttribute('id')).equal(SCROLL_CONTAINER_DOM_ID);
-    expect(document.getElementById(SCROLL_CONTAINER_DOM_ID).getAttribute('style')).equal(`width: ${SCROLL_CONTAINER_WIDTH}px;height: ${SCROLL_CONTAINER_HEIGHT}px;overflow: auto`);
+    expect(document.getElementById(SCROLL_CONTAINER_DOM_ID)?.getAttribute('id')).equal(SCROLL_CONTAINER_DOM_ID);
+    expect(document.getElementById(SCROLL_CONTAINER_DOM_ID)?.getAttribute('style')).equal(`width: ${SCROLL_CONTAINER_WIDTH}px;height: ${SCROLL_CONTAINER_HEIGHT}px;overflow: auto`);
   });
 
   test('onScroll', () => {
@@ -58,7 +58,7 @@ describe('useScroll', () => {
         })
       }
     );
-    document.getElementById(SCROLL_CONTAINER_DOM_ID).scroll({ top: 100, behavior: 'smooth' });
+    document.getElementById(SCROLL_CONTAINER_DOM_ID)?.scroll({ top: 100, behavior: 'smooth' });
     expect(mockOnScroll).toHaveBeenCalledOnce();
   });
 
