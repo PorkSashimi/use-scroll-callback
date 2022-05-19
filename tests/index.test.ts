@@ -1,6 +1,6 @@
 import useScroll from '../src/index';
 import { renderHook } from '@testing-library/react-hooks';
-import { beforeAll, describe, expect, test } from 'vitest';
+import { vi, beforeAll, describe, expect, test, } from 'vitest';
 
 const SCROLL_CONTAINER_WIDTH = 400;
 const SCROLL_CONTAINER_HEIGHT = 400;
@@ -11,6 +11,10 @@ const SCROLL_CONTAINER_DOM_ID = 'scroll-container';
  * @vitest-environment jsdom
  */
 describe('useScroll', () => {
+
+  beforeAll(() => {
+    Element.prototype.scroll = vi.fn(() => { });
+  });
 
   beforeAll(() => {
 
@@ -32,19 +36,30 @@ describe('useScroll', () => {
 
   test('scroll element should be defined', () => {
     expect(document.getElementById(SCROLL_ELEMENT_DOM_ID)).toBeDefined();
+    expect(document.getElementById(SCROLL_ELEMENT_DOM_ID).getAttribute('id')).equal(SCROLL_ELEMENT_DOM_ID);
+    expect(document.getElementById(SCROLL_ELEMENT_DOM_ID).getAttribute('style')).equal(`width: ${SCROLL_CONTAINER_WIDTH * 2}px;height: ${SCROLL_CONTAINER_HEIGHT * 2}px`);
   });
 
-  test('scroll element should be defined', () => {
+  test('scroll container should be defined', () => {
     expect(document.getElementById(SCROLL_CONTAINER_DOM_ID)).toBeDefined();
+    expect(document.getElementById(SCROLL_CONTAINER_DOM_ID).getAttribute('id')).equal(SCROLL_CONTAINER_DOM_ID);
+    expect(document.getElementById(SCROLL_CONTAINER_DOM_ID).getAttribute('style')).equal(`width: ${SCROLL_CONTAINER_WIDTH}px;height: ${SCROLL_CONTAINER_HEIGHT}px;overflow: auto`);
   });
 
-  test('document body', () => {
-    const hook = renderHook(
-      () => useScroll({
-        target: () => document.getElementById(SCROLL_CONTAINER_DOM_ID)!
-      })
+  test('onScroll', () => {
+    const mockOnScroll = vi.fn();
+    const mockOnScrollLeft = vi.fn();
+    renderHook(
+      () => {
+        return useScroll({
+          onScroll: () => mockOnScroll(),
+          onScrollLeft: () => mockOnScrollLeft(),
+          target: () => document.getElementById(SCROLL_CONTAINER_DOM_ID)!
+        })
+      }
     );
-    expect(hook.result.current).toEqual(undefined);
+    document.getElementById(SCROLL_CONTAINER_DOM_ID).scroll({ top: 100, behavior: 'smooth' });
+    expect(mockOnScroll).toHaveBeenCalledOnce();
   });
 
 });
