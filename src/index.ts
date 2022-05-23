@@ -1,15 +1,12 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
 type TPosition = {
   top: number;
   left: number;
-  direction: TDirection[];
 };
 
-type TDirection = 'up' | 'down' | 'left' | 'right' | 'unknown';
-
 type TOptions = {
-  target?: () => HTMLElement;
+  target: () => HTMLElement;
   onScrollTop?: (oldPosition: TPosition, newPosition: TPosition, event: Event) => void;
   onScroll?: (oldPosition: TPosition, newPosition: TPosition, event: Event) => void;
   onScrollLeft?: (oldPosition: TPosition, newPosition: TPosition, event: Event) => void;
@@ -25,65 +22,70 @@ type TOptions = {
 
 function useScroll(options: TOptions) {
 
-  const positionRef = useRef<TPosition>({ top: 0, left: 0, direction: ['unknown'] });
-
-  // ------
-
-  const target = useMemo(() => {
-    return options?.target?.() || window;
-  }, [options.target]);
+  const positionRef = useRef<TPosition>({ top: 0, left: 0 });
 
   // ------
 
   useEffect(() => {
-    target?.addEventListener('scroll', onScroll)
+    const element = options.target?.();
+    if (element) {
+      positionRef.current = getElementPosition(element);
+    }
+  }, []);
+
+  useEffect(() => {
+    options.target?.().addEventListener('scroll', onScroll)
     return () => {
-      target?.removeEventListener('scroll', onScroll);
+      options.target?.().removeEventListener('scroll', onScroll);
     };
-  }, [target]);
+  }, [options.target]);
 
   // ------
 
-  function onScroll(event: Event) {
+  function getElementPosition(element?: HTMLElement) {
     /**
      * TODO: type “EventTarget” not exist in “scroll*”。ts(2339)
      */
-    const target = event.target as HTMLInputElement;
-    const top = (target.scrollTop / (target.scrollHeight - target.clientHeight)) || 0;
-    const left = (target.scrollLeft / (target.scrollWidth - target.clientWidth)) || 0;
-    let newPosition: null | TPosition = null;
-    let oldPosition: TPosition = positionRef.current;
+    const target = element as HTMLInputElement;
+    if (element) {
+      const top = (target.scrollTop / (target.scrollHeight - target.clientHeight)) || 0;
+      const left = (target.scrollLeft / (target.scrollWidth - target.clientWidth)) || 0;
+      return { top, left };
+    } else {
+      return { top: 0, left: 0 };
+    }
+  }
 
-    if (oldPosition.top > top) {
-      newPosition = { top, left, direction: ['up'] };
-      if (top === 0) {
+  function onScroll(event: Event) {
+    let oldPosition: TPosition = positionRef.current;
+    let newPosition: TPosition = getElementPosition(event.target as HTMLInputElement);
+
+    if (oldPosition.top > newPosition.top) {
+      if (newPosition.top === 0) {
         options.onScrollTop?.(oldPosition, newPosition, event);
       }
     }
 
-    if (oldPosition.top < top) {
-      newPosition = { top, left, direction: ['down'] };
-      if (top > 0.9998) {
+    if (oldPosition.top < newPosition.top) {
+      if (newPosition.top > 0.9998) {
         options.UNSAFE_onScrollBottom?.(oldPosition, newPosition, event);
       }
     }
 
-    if (oldPosition.left > left) {
-      newPosition = { top, left, direction: ['left'] };
-      if (left === 0) {
+    if (oldPosition.left > newPosition.left) {
+      if (newPosition.left === 0) {
         options.onScrollLeft?.(oldPosition, newPosition, event);
       }
     }
 
-    if (oldPosition.left < left) {
-      newPosition = { top, left, direction: ['right'] };
-      if (left > 0.9998) {
+    if (oldPosition.left < newPosition.left) {
+      if (newPosition.left > 0.9998) {
         options.UNSAFE_onScrollRight?.(oldPosition, newPosition, event);
       }
     }
 
     options.onScroll?.(oldPosition, newPosition!, event);
-    positionRef.current = newPosition!;
+    positionRef.current = newPosition;
 
   }
 }
