@@ -27,13 +27,6 @@ function useScroll(options: TOptions) {
   // ------
 
   useEffect(() => {
-    const element = options.target?.();
-    if (element) {
-      positionRef.current = getElementPosition(element);
-    }
-  }, []);
-
-  useEffect(() => {
     options.target?.().addEventListener('scroll', onScroll)
     return () => {
       options.target?.().removeEventListener('scroll', onScroll);
