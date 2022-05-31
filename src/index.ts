@@ -31,7 +31,7 @@ function useScroll(options: TOptions) {
   // ------
 
   useEffect(() => {
-    if (options.manual !== false) {
+    if (options.manual !== true) {
       onInit();
     }
     return () => {
