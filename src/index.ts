@@ -6,9 +6,13 @@ type TPosition = {
 };
 
 type TOptions = {
+  /**
+   * @default true
+   */
+  manual?: boolean;
   target: () => HTMLElement;
-  onScrollTop?: (oldPosition: TPosition, newPosition: TPosition, event: Event) => void;
   onScroll?: (oldPosition: TPosition, newPosition: TPosition, event: Event) => void;
+  onScrollTop?: (oldPosition: TPosition, newPosition: TPosition, event: Event) => void;
   onScrollLeft?: (oldPosition: TPosition, newPosition: TPosition, event: Event) => void;
   /**
    * TODO: unsafe
@@ -27,7 +31,9 @@ function useScroll(options: TOptions) {
   // ------
 
   useEffect(() => {
-    onInit();
+    if (options.manual !== false) {
+      onInit();
+    }
     return () => {
       onDestory();
     };
