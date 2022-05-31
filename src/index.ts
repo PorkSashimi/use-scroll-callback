@@ -27,9 +27,9 @@ function useScroll(options: TOptions) {
   // ------
 
   useEffect(() => {
-    options.target?.().addEventListener('scroll', onScroll)
+    onInit();
     return () => {
-      options.target?.().removeEventListener('scroll', onScroll);
+      onDestory();
     };
   }, [options.target]);
 
@@ -47,6 +47,16 @@ function useScroll(options: TOptions) {
     } else {
       return { top: 0, left: 0 };
     }
+  }
+
+  // ------
+
+  function onInit() {
+    options.target?.().addEventListener('scroll', onScroll);
+  }
+
+  function onDestory() {
+    options.target?.().removeEventListener('scroll', onScroll);
   }
 
   function onScroll(event: Event) {
@@ -81,6 +91,14 @@ function useScroll(options: TOptions) {
     positionRef.current = newPosition;
 
   }
+
+  // ------
+
+  return {
+    addScrollListener: onInit,
+    removeScrollListener: onDestory
+  };
+
 }
 
 export default useScroll;
