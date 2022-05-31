@@ -52,11 +52,11 @@ function useScroll(options: TOptions) {
   // ------
 
   function onInit() {
-    options.target?.().addEventListener('scroll', onScroll);
+    options.target().addEventListener('scroll', onScroll);
   }
 
   function onDestory() {
-    options.target?.().removeEventListener('scroll', onScroll);
+    options.target().removeEventListener('scroll', onScroll);
   }
 
   function onScroll(event: Event) {

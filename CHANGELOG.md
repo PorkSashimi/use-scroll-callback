@@ -17,3 +17,9 @@
 `2022-05-31`
 
 - 💄 新增 `addScrollListener` 与 `removeScrollListener` 方法。
+
+## 1.0.9
+
+`2022-05-31`
+
+- 🐞 移除 `options.target` 的可选链标识
