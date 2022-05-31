@@ -2,7 +2,7 @@ import useScroll from '../../src/index';
 
 function App() {
 
-  useScroll({
+  const { addScrollListener, removeScrollListener } = useScroll({
     onScroll: (...args) => {
       console.log('onScroll', args);
     },
@@ -25,7 +25,13 @@ function App() {
 
   return (
     <div className="App">
-      <div id='scroll-container' style={{overflow: 'auto',height: '200px'}}>
+      <button onClick={() => addScrollListener()}>
+        add Lietener
+      </button>
+      <button onClick={() => removeScrollListener()}>
+        remove Lietener
+      </button>
+      <div id='scroll-container' style={{ overflow: 'auto', height: '200px' }}>
         <div>111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111</div>
         <div>1</div>
         <div>1</div>
