@@ -37,7 +37,7 @@ function useScroll(options: TOptions) {
     return () => {
       onDestory();
     };
-  }, [options.target]);
+  }, []);
 
   // ------
 
