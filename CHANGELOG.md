@@ -35,3 +35,10 @@
 `2022-05-31`
 
 - 🐞 修复 `options.manual` 初始化时判断逻辑错误的问题
+
+
+## 1.0.12
+
+`2022-06-01`
+
+- 🐞 修复 `options.manual` 在 useEffect 时机错误导致的多次 `onDestory`
