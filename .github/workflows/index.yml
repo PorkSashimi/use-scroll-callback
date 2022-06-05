@@ -34,7 +34,7 @@ jobs:
       - name: publish to npm
         run: |
           pnpm config set //registry.npmjs.org/:_authToken=$NPM_TOKEN
-          pnpm run publish
+          pnpm run pub
         env:
           NPM_TOKEN: ${{secrets.NPM_ACCESS_TOKEN}}
 

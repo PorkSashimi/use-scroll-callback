@@ -1,6 +1,6 @@
 {
   "name": "@pork-sashimi/use-scroll",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -13,7 +13,7 @@
   },
   "scripts": {
     "dev": "cd example && pnpm i && pnpm run dev && cd ../",
-    "publish": "pnpm run build && pnpm publish --access public",
+    "pub": "pnpm run build && pnpm publish --access public",
     "clean": "rm -rf dist/ && rm -rf node_modules/",
     "build": "pnpm clean && pnpm i && rollup --config rollup.config.js && tsc"
   },
