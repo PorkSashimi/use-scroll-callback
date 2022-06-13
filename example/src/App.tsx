@@ -1,22 +1,28 @@
+import { useState } from 'react';
 import useScroll from '../../src/index';
 
 function App() {
 
-  const { addScrollListener, removeScrollListener } = useScroll({
+  const [count, setCount] = useState(0);
+
+  // ------
+
+  const { position, addScrollListener, removeScrollListener } = useScroll({
     onScroll: (...args) => {
       console.log('onScroll', args);
     },
-    onScrollTop: (...args) => {
-      console.log('onScrollTop', args);
+    onScrollTop: () => {
+      console.log('onScrollTop');
     },
-    onScrollLeft: (...args) => {
-      console.log('onScrollLeft', args);
+    onScrollLeft: () => {
+      console.log('onScrollLeft');
     },
-    UNSAFE_onScrollRight: (...args) => {
-      console.log('UNSAFE_onScrollRight', args);
+    UNSAFE_onScrollRight: () => {
+      console.log('UNSAFE_onScrollRight');
     },
-    UNSAFE_onScrollBottom: (...args) => {
-      console.log('UNSAFE_onScrollBottom', args);
+    UNSAFE_onScrollBottom: () => {
+      setCount(count + 1)
+      console.log('UNSAFE_onScrollBottom');
     },
     target: () => document.getElementById('scroll-container')!
   });
@@ -31,6 +37,13 @@ function App() {
       <button onClick={() => removeScrollListener()}>
         remove Lietener
       </button>
+      <div>
+        {JSON.stringify(position[0])}
+        {JSON.stringify(position[1])}
+      </div>
+      <div>
+        {count}
+      </div>
       <div id='scroll-container' style={{ overflow: 'auto', height: '200px' }}>
         <div>111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111</div>
         <div>1</div>
