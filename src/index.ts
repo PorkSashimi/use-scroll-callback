@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useState } from 'react';
 
 type TPosition = {
   top: number;
@@ -6,27 +6,18 @@ type TPosition = {
 };
 
 type TOptions = {
-  /**
-   * @default true
-   */
   manual?: boolean;
+  UNSAFE_onScrollRight?: () => void;
   target: () => HTMLElement;
-  onScroll?: (oldPosition: TPosition, newPosition: TPosition, event: Event) => void;
-  onScrollTop?: (oldPosition: TPosition, newPosition: TPosition, event: Event) => void;
-  onScrollLeft?: (oldPosition: TPosition, newPosition: TPosition, event: Event) => void;
-  /**
-   * TODO: unsafe
-   */
-  UNSAFE_onScrollRight?: (oldPosition: TPosition, newPosition: TPosition, event: Event) => void;
-  /**
-   * TODO: unsafe
-   */
-  UNSAFE_onScrollBottom?: (oldPosition: TPosition, newPosition: TPosition, event: Event) => void;
+  UNSAFE_onScrollBottom?: () => void;
+  onScrollTop?: () => void;
+  onScroll?: (oldPosition?: TPosition, newPosition?: TPosition) => void;
+  onScrollLeft?: () => void;
 };
 
 function useScroll(options: TOptions) {
 
-  const positionRef = useRef<TPosition>({ top: 0, left: 0 });
+  const [position, setPosition] = useState<[undefined | TPosition, undefined | TPosition]>([{ top: 0, left: 0 }, undefined]);
 
   // ------
 
@@ -39,68 +30,71 @@ function useScroll(options: TOptions) {
     };
   }, []);
 
-  // ------
-
-  function getElementPosition(element?: HTMLElement) {
-    /**
-     * TODO: type “EventTarget” not exist in “scroll*”。ts(2339)
-     */
-    const target = element as HTMLInputElement;
-    if (element) {
-      const top = (target.scrollTop / (target.scrollHeight - target.clientHeight)) || 0;
-      const left = (target.scrollLeft / (target.scrollWidth - target.clientWidth)) || 0;
-      return { top, left };
-    } else {
-      return { top: 0, left: 0 };
-    }
-  }
+  useEffect(() => {
+    onChange(position[0], position[1]);
+  }, [position]);
 
   // ------
 
   function onInit() {
-    options.target().addEventListener('scroll', onScroll);
+    options.target()?.addEventListener('scroll', onScroll);
   }
 
   function onDestory() {
-    options.target().removeEventListener('scroll', onScroll);
+    options.target()?.removeEventListener('scroll', onScroll);
   }
 
   function onScroll(event: Event) {
-    let oldPosition: TPosition = positionRef.current;
-    let newPosition: TPosition = getElementPosition(event.target as HTMLInputElement);
+    let newPosition: undefined | TPosition;
+    const target = event.target as HTMLInputElement;
+    if (target) {
+      newPosition = {
+        top: target.scrollTop / (target.scrollHeight - target.clientHeight),
+        left: target.scrollLeft / (target.scrollWidth - target.clientWidth),
+      };
+    } else {
+      newPosition = undefined;
+    }
+    setPosition(pre => [pre[1], newPosition]);
+  }
+
+  function onChange(oldPosition: undefined | TPosition, newPosition: undefined | TPosition) {
+
+    options.onScroll?.(oldPosition, newPosition);
+
+    if (!oldPosition || !newPosition) {
+      return;
+    }
 
     if (oldPosition.top > newPosition.top) {
       if (newPosition.top === 0) {
-        options.onScrollTop?.(oldPosition, newPosition, event);
+        options.onScrollTop?.();
       }
     }
 
     if (oldPosition.top < newPosition.top) {
       if (newPosition.top > 0.9998) {
-        options.UNSAFE_onScrollBottom?.(oldPosition, newPosition, event);
+        options.UNSAFE_onScrollBottom?.();
       }
     }
 
     if (oldPosition.left > newPosition.left) {
       if (newPosition.left === 0) {
-        options.onScrollLeft?.(oldPosition, newPosition, event);
+        options.onScrollLeft?.();
       }
     }
 
     if (oldPosition.left < newPosition.left) {
       if (newPosition.left > 0.9998) {
-        options.UNSAFE_onScrollRight?.(oldPosition, newPosition, event);
+        options.UNSAFE_onScrollRight?.();
       }
     }
-
-    options.onScroll?.(oldPosition, newPosition!, event);
-    positionRef.current = newPosition;
-
   }
 
   // ------
 
   return {
+    position,
     addScrollListener: onInit,
     removeScrollListener: onDestory
   };
