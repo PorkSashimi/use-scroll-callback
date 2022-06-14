@@ -17,6 +17,7 @@ type TOptions = {
 
 function useScroll(options: TOptions) {
 
+  const [listenning, setListenning] = useState<boolean>(false);
   const [position, setPosition] = useState<[undefined | TPosition, undefined | TPosition]>([{ top: 0, left: 0 }, undefined]);
 
   // ------
@@ -38,10 +39,12 @@ function useScroll(options: TOptions) {
 
   function onInit() {
     options.target()?.addEventListener('scroll', onScroll);
+    setListenning(true);
   }
 
   function onDestory() {
     options.target()?.removeEventListener('scroll', onScroll);
+    setListenning(false);
   }
 
   function onScroll(event: Event) {
@@ -59,6 +62,10 @@ function useScroll(options: TOptions) {
   }
 
   function onChange(oldPosition: undefined | TPosition, newPosition: undefined | TPosition) {
+
+    if (!listenning) {
+      return;
+    }
 
     options.onScroll?.(oldPosition, newPosition);
 
